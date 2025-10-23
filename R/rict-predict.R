@@ -87,8 +87,8 @@ rict_predict <- function(data = NULL,
   ## load supporting tables ---------------------------------------------------
   if (taxa == TRUE) {
     taxa.input.data <- utils::read.csv(system.file("extdat",
-      "TAXA_AB_APR_PRAB.csv",
-      package = "rict"
+                                                   "TAXA_AB_APR_PRAB.csv",
+                                                   package = "rict"
     ),
     stringsAsFactors = TRUE,
     skip = 1
@@ -98,16 +98,16 @@ rict_predict <- function(data = NULL,
   }
 
   end_group_index <- utils::read.csv(system.file("extdat",
-    "x-103-end-group-means-formatted-jdb-17-dec-2019.csv",
-    package = "rict"
+                                                 "x-103-end-group-means-formatted-jdb-17-dec-2019.csv",
+                                                 package = "rict"
   ),
   check.names = FALSE
   )
   end_group_index <- rename_end_group_means(end_group_index)
   if (area == "iom") {
     end_group_index <- utils::read.csv(system.file("extdat",
-      "x-103-end-group-means-formatted-iom.csv",
-      package = "rict"
+                                                   "x-103-end-group-means-formatted-iom.csv",
+                                                   package = "rict"
     ),
     check.names = FALSE
     )
@@ -121,8 +121,8 @@ rict_predict <- function(data = NULL,
   }
 
   nr_efg_groups <- utils::read.csv(system.file("extdat",
-    "end-grp-assess-scores.csv",
-    package = "rict"
+                                               "end-grp-assess-scores.csv",
+                                               package = "rict"
   ))
 
   if (model == "physical" && area == "gb") {
@@ -144,17 +144,17 @@ rict_predict <- function(data = NULL,
   if (area == "ni") {
     df_mean_gb685 <-
       utils::read.delim(system.file("extdat", "DFMEAN_NI_RALPH.DAT",
-        package = "rict"),
-        header = FALSE, sep = "", as.is = TRUE
+                                    package = "rict"),
+                        header = FALSE, sep = "", as.is = TRUE
       )
     df_coeff_gb685 <-
       utils::read.delim(system.file("extdat", "DFCOEFF_NI.DAT",
                                     package = "rict"),
-        header = FALSE, sep = "", as.is = TRUE
+                        header = FALSE, sep = "", as.is = TRUE
       )
     nr_efg_groups <-
       utils::read.csv(system.file("extdat", "EndGrp_AssessScoresNI.csv",
-        package = "rict"
+                                  package = "rict"
       ))
   }
   if (model == "gis") {
@@ -162,14 +162,14 @@ rict_predict <- function(data = NULL,
       utils::read.csv(
         system.file("extdat",
                     "end-group-means-discriminant-scores-model-44.csv",
-          package = "rict"
+                    package = "rict"
         )
       )
     df_mean_gb685 <- df_mean_gb685[, 3:19]
     df_coeff_gb685 <-
       utils::read.csv(
         system.file("extdat", "discriminant-function-coefficients-model-44.csv",
-          package = "rict"
+                    package = "rict"
         )
       )
   }
@@ -178,31 +178,31 @@ rict_predict <- function(data = NULL,
     df_mean_gb685 <-
       utils::read.delim(system.file("extdat", "df-mean-iom.DAT",
                                     package = "rict"),
-        header = FALSE, sep = "", as.is = TRUE
+                        header = FALSE, sep = "", as.is = TRUE
       )
     df_coeff_gb685 <-
       utils::read.delim(system.file("extdat", "df-coeff-iom.DAT",
                                     package = "rict"),
-        header = FALSE, sep = "", as.is = TRUE
+                        header = FALSE, sep = "", as.is = TRUE
       )
     nr_efg_groups <-
       utils::read.csv(system.file("extdat", "end-group-assess-scores-iom.csv",
-        package = "rict"
+                                  package = "rict"
       ))
   }
 
   # check season provided#
   seasons_to_run <-
     length(na.omit(c(data$SPR_SEASON_ID[1],
-             data$AUT_SEASON_ID[1],
-             data$SUM_SEASON_ID[1])))
+                     data$AUT_SEASON_ID[1],
+                     data$SUM_SEASON_ID[1])))
   if(seasons_to_run < 1) {
     warning("No '...SEASON_ID' provided, predicting all seasons",
             call. = FALSE
     ) # or run all seasons if not provided
     seasons_to_run <- 1:3
   } else {
-  seasons_to_run <- 1:3
+    seasons_to_run <- 1:3
   }
   data <- all_validation[[1]]
   if (model == "gis") {
@@ -221,7 +221,7 @@ rict_predict <- function(data = NULL,
       "LOG.DISTANCE.FROM.SOURCE" = data$vld_dist_src_log,
       "LOG.WIDTH" = data$mn_width_log,
       "LOG.DEPTH" = data$mn_depth_log,
-      "MEAN.SUBSTRATUM" = data$vld_substr_log, # overwrite substrate variable
+      "MEAN.SUBSTRATUM" = data$vld_substr_log,
       "DISCHARGE.CATEGORY" = data$DISCHARGE, # data$disch_log,
       "ALKALINITY" = data$ALKALINITY,
       "LOG.ALKALINITY" = data$vld_alkal_log,
@@ -348,8 +348,8 @@ rict_predict <- function(data = NULL,
   endgroup_index_frame <- end_group_index[grep(area, end_group_index$RIVPACS_Model, ignore.case = TRUE), ]
   endgroup_index_frame <- dplyr::select(endgroup_index_frame, -.data$RIVPACS_Model)
   endgroup_index_frame <- dplyr::rename(endgroup_index_frame,
-    EndGrp = .data$End_Group,
-    SeasonCode = .data$Season_Code
+                                        EndGrp = .data$End_Group,
+                                        SeasonCode = .data$Season_Code
   )
 
   # Sort by the columns "EndGrp", "SeasonCode"
@@ -466,7 +466,7 @@ rict_predict <- function(data = NULL,
   if (any(names_biological %in% names(data))) {
     biological_data <- data[, names(data) %in% names_biological]
     if(length(biological_data[names(biological_data) %in%
-              c("SITE", "WATERBODY", "YEAR")]) < 3) {
+                              c("SITE", "WATERBODY", "YEAR")]) < 3) {
       stop("You provided data missing either SITE, WATERBODY or YEAR, we expect
            all three columns to be present")
     }
@@ -483,7 +483,7 @@ rict_predict <- function(data = NULL,
       autumn <- 4
     }
     if(!any(c(spring, summer, autumn) == 4)) {
-     stop("At least one season must have SEASON_ID, ASPT, NTAXA and
+      stop("At least one season must have SEASON_ID, ASPT, NTAXA and
           BIAS columns present.")
     }
     indices_predictions <- cbind(indices_predictions, biological_data)
@@ -495,17 +495,17 @@ rict_predict <- function(data = NULL,
     stop(paste0("You provided a data with no observation columns provided,
                 We expect at least one season's worth of observation and
                 SITE, WATERBODY, YEAR: ",
-               paste((names_biological), collapse = ",")))
+                paste((names_biological), collapse = ",")))
   }
   # Add in missing columns to allow classification to run
   # - will return empty values for missing seasons etc
   missing_columns <-
     names_biological[!names_biological %in% names(data)]
   if(length(missing_columns) > 0) {
-  missing <- data.frame()
-  missing[missing_columns] <- list(numeric(0))
-  missing[1:nrow(indices_predictions), missing_columns] <- NA
-  indices_predictions <- cbind(indices_predictions, missing)
+    missing <- data.frame()
+    missing[missing_columns] <- list(numeric(0))
+    missing[1:nrow(indices_predictions), missing_columns] <- NA
+    indices_predictions <- cbind(indices_predictions, missing)
   }
   return(indices_predictions)
 }
