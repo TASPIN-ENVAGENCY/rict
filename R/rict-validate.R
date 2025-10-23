@@ -401,7 +401,7 @@ These values will be used instead of calculating them from Grid Reference values
 
   # Calculate total substrate and phi grain size scale
   if (model == "physical" && area != "iom") {
-    data <- get_substrate(data)
+    data$vld_substr_log <- data$Substrate_phi
   }
 
   ### Check values pass validation rules ----------------------------------------------------------
