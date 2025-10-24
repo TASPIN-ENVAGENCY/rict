@@ -30,6 +30,7 @@ SILT_CLAY,Silt Clay Percentage ,%,all,physical,FALSE,FALSE,input,FALSE,,,numeric
 MSUBST,Mean Substratum,%,gb,physical,FALSE,FALSE,calculated,TRUE,ENV 7,7,numeric,integer,,,-7.705,8,,,,,FALSE,,min value used to train model,max value used to train model,,,
 MSUBST,Mean Substratum,%,ni,physical,FALSE,FALSE,calculated,TRUE,ENV 7,7,numeric,integer,,,-7.75,6.6125,,,,,FALSE,,min value used to train model,max value used to train model,,,
 SUBSTRATE_PHI,Mean Substrate,%,gb,physical,FALSE,FALSE,input,FALSE,,,numeric,integer,,,-7.75,6.6125,,,,,FALSE,,min value used to train model,max value used to train model,,,
+SUBSTRATE_PHI,Mean Substrate,%,ni,physical,FALSE,FALSE,input,FALSE,,,numeric,integer,,,-7.75,6.6125,,,,,FALSE,,min value used to train model,max value used to train model,,,
 HARDNESS,Hardness,%,all,physical,FALSE,TRUE,input,TRUE,,,numeric,integer,,,,,,,,,FALSE,,min value used to train model,max value used to train model,,"One of Alkalinity, Hardness, Conductivity or Calcium",
 CALCIUM,Calcium Concentration,,all,physical,FALSE,TRUE,input,TRUE,,,numeric,integer,,,,,,,,,FALSE,,min value used to train model,max value used to train model,,"One of Alkalinity, Hardness, Conductivity or Calcium",
 CONDUCTIVITY,Electrical Conductivity,,all,physical,FALSE,TRUE,input,FALSE,,,numeric,integer,,,,,,,,,FALSE,,min value used to train model,max value used to train model,,"One of Alkalinity, Hardness, Conductivity or Calcium",
