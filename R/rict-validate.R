@@ -86,7 +86,7 @@ rict_validate <- function(data = NULL,
   # Load validation rules
   validation_rules <-
     utils::read.csv(system.file("extdat", "validation-rules.csv", package = "rict"),
-      stringsAsFactors = FALSE
+                    stringsAsFactors = FALSE
     )
   # Standardise all column names to uppercase
   names(data) <- toupper(names(data))
@@ -101,7 +101,7 @@ rict_validate <- function(data = NULL,
   models <- c("gis", "physical")
   check_models <- lapply(models, function(model) {
     ifelse(any(names(data) %in% validation_rules$variable[validation_rules$models == model]),
-      TRUE, FALSE
+           TRUE, FALSE
     )
   })
   ### Predictor variables provided for more than one model? ----------------------------------------
@@ -123,8 +123,8 @@ rict_validate <- function(data = NULL,
     if (length(data_present[data_present == TRUE]) > 1) {
       stop("The data provided contains values for more than one model
         Hint: Check your data contains values for a single model type only: ",
-        paste(c(models), collapse = " or "), ". ",
-        call. = FALSE
+           paste(c(models), collapse = " or "), ". ",
+           call. = FALSE
       )
     }
   } else {
@@ -138,66 +138,66 @@ rict_validate <- function(data = NULL,
   # If model not detected
   if (length(model) == 0) {
     stop("You provided data without all required columns for either Model 1 or Model 44:", paste("\n", names(data)),
-      paste("\n", "Hint: Check input dataset match required for either Model 1 or Model 44 input variables"),
-      call. = FALSE
+         paste("\n", "Hint: Check input dataset match required for either Model 1 or Model 44 input variables"),
+         call. = FALSE
     )
   }
   # Display which model type has been detected
   message("Variables for the '", model, "' model detected - applying relevant checks. ")
   if (model == "physical" && is.null(area)) {
     ### Detect NI / GB grid references --------------------------------------------------------
-     # Check is NGR has two letters.
-     areas <- unique(ifelse(grepl(pattern = "^.[A-Z]", toupper(data$NGR)),
-                            "gb", "ni"))
-     # If NGR has two letters check if any letters 'I' - indicates Irish NGR.
-     if(any(areas == "gb")) {
-     areas <- unique(ifelse(grepl(pattern = "^[I]", toupper(data$NGR)),
-                            "ni", "gb"))
-     }
-     # Remove optional 'I' - in Irish NGR - this is legacy of old RICT1 but some
-     # users may still add this out of habit
-     if(any(areas == "ni")) {
-       data$NGR <- gsub("I", "", toupper(data$NGR))
-     }
+    # Check is NGR has two letters.
+    areas <- unique(ifelse(grepl(pattern = "^.[A-Z]", toupper(data$NGR)),
+                           "gb", "ni"))
+    # If NGR has two letters check if any letters 'I' - indicates Irish NGR.
+    if(any(areas == "gb")) {
+      areas <- unique(ifelse(grepl(pattern = "^[I]", toupper(data$NGR)),
+                             "ni", "gb"))
+    }
+    # Remove optional 'I' - in Irish NGR - this is legacy of old RICT1 but some
+    # users may still add this out of habit
+    if(any(areas == "ni")) {
+      data$NGR <- gsub("I", "", toupper(data$NGR))
+    }
 
     if (length(areas) > 1) {
       stop("The data provided contains more than one area of the UK.
         Hint: Check your data contains NGR grid letters for either: ",
-        paste(c(toupper(areas)), collapse = " or "), ". ",
-        call. = FALSE
+           paste(c(toupper(areas)), collapse = " or "), ". ",
+           call. = FALSE
       )
     } else {
       area <- areas
     }
   } else {
     if(is.null(area)) {
-    area <- "gb" # model 44 currently always "gb" but could change in future
+      area <- "gb" # model 44 currently always "gb" but could change in future
     }
   }
 
   if(model == "physical") {
-  # Convert to numeric in order to help validate them as numbers
-  data$EASTING <- as.numeric(data$EASTING)
-  data$NORTHING <- as.numeric(data$NORTHING)
+    # Convert to numeric in order to help validate them as numbers
+    data$EASTING <- as.numeric(data$EASTING)
+    data$NORTHING <- as.numeric(data$NORTHING)
 
-  # Find Isle of Man NGRs and to apply IOM model/area
-  sc_data <- dplyr::filter(data, toupper(.data$NGR) == "SC")
-  sc_data <- dplyr::filter(sc_data, .data$NORTHING <= 99999)
-  sc_data <- dplyr::filter(sc_data, .data$EASTING <= 55000)
-  if(nrow(sc_data) > 0) {
-    message("Site location detected in the Isle of Man -
+    # Find Isle of Man NGRs and to apply IOM model/area
+    sc_data <- dplyr::filter(data, toupper(.data$NGR) == "SC")
+    sc_data <- dplyr::filter(sc_data, .data$NORTHING <= 99999)
+    sc_data <- dplyr::filter(sc_data, .data$EASTING <= 55000)
+    if(nrow(sc_data) > 0) {
+      message("Site location detected in the Isle of Man -
               applying IOM model for all input data")
-    area <- "iom"
-  }
+      area <- "iom"
+    }
 
-  nx_data <- dplyr::filter(data, toupper(.data$NGR) == "NX")
-  nx_data <- dplyr::filter(nx_data, .data$NORTHING <= 10000)
-  nx_data <- dplyr::filter(nx_data, .data$EASTING <= 55000)
-  if(area != "iom" && nrow(nx_data) > 0) {
-    message("Site location detected in the Isle of Man -
+    nx_data <- dplyr::filter(data, toupper(.data$NGR) == "NX")
+    nx_data <- dplyr::filter(nx_data, .data$NORTHING <= 10000)
+    nx_data <- dplyr::filter(nx_data, .data$EASTING <= 55000)
+    if(area != "iom" && nrow(nx_data) > 0) {
+      message("Site location detected in the Isle of Man -
               applying IOM model for all input data")
-    area <- "iom"
-  }
+      area <- "iom"
+    }
   }
   # Re-assigning area due to issue with filtering column and variable sharing same name
   area_selected <- area
@@ -205,39 +205,39 @@ rict_validate <- function(data = NULL,
   ### Filter rules based on which model and area selected -------------------------------------------
   if(area != "iom") {
     validation_rules <-
-    dplyr::filter(validation_rules, area %in% c(area_selected, "all")) %>%
-    dplyr::filter(models %in% c(model, "all"))
+      dplyr::filter(validation_rules, area %in% c(area_selected, "all")) %>%
+      dplyr::filter(models %in% c(model, "all"))
   }
 
   if(area == "iom") {
     validation_rules <-
       dplyr::filter(validation_rules, .data$variable %in% c("SITE",
-                                                      "YEAR",
-                                                      "WATERBODY",
-                                                      "NGR",
-                                                      "EASTING",
-                                                      "NORTHING",
-                                                      "DIST_FROM_SOURCE",
-                                                      "ALTITUDE",
-                                                      "SLOPE",
-                                                      "ALKALINITY"))
+                                                            "YEAR",
+                                                            "WATERBODY",
+                                                            "NGR",
+                                                            "EASTING",
+                                                            "NORTHING",
+                                                            "DIST_FROM_SOURCE",
+                                                            "ALTITUDE",
+                                                            "SLOPE",
+                                                            "ALKALINITY"))
 
-        validation_rules <-
-                      dplyr::filter(validation_rules, area %in% c("all","iom"))
+    validation_rules <-
+      dplyr::filter(validation_rules, area %in% c("all","iom"))
 
 
-        validation_rules <-
-          dplyr::filter(validation_rules, models != "gis")
+    validation_rules <-
+      dplyr::filter(validation_rules, models != "gis")
 
   }
   ### Check column names correct ------------------------------------------------------------------
   # Note: additional columns provided by user are allowed
   if (all(validation_rules$variable[validation_rules$source == "input"] %in%
-    names(data)) == FALSE) {
+          names(data)) == FALSE) {
     stop(
       "Can't find these columns in data: ",
       paste("\n", validation_rules$variable[!validation_rules$variable %in%
-        names(data) & validation_rules$source == "input"]),
+                                              names(data) & validation_rules$source == "input"]),
       call. = FALSE
     )
   }
@@ -284,7 +284,7 @@ rict_validate <- function(data = NULL,
   ### Check columns that may or may not be provided -----------------------------------------
   if (model == "physical" && area != "iom") {
     if (all(!is.na(data$DISCHARGE)) &&
-      all(!is.na(data$VELOCITY))) {
+        all(!is.na(data$VELOCITY))) {
       warning("You provided both VELOCITY and DISCHARGE values,
           DISCHARGE will be used by default. ", call. = FALSE)
       # Store VELOCITY in VELO_TRUE column (this will be replaced after
@@ -376,7 +376,7 @@ rict_validate <- function(data = NULL,
     # Calculate mean temperature (TMEAN), range temperature (TRANGE) only if
     # users have not provided temperatures e.g. could be studying climate change etc...
     if ((is.null(data$MEAN.AIR.TEMP) || is.null(data$AIR.TEMP.RANGE)) ||
-      (any(is.na(data$MEAN.AIR.TEMP)) || any(is.na(data$AIR.TEMP.RANGE)))) {
+        (any(is.na(data$MEAN.AIR.TEMP)) || any(is.na(data$AIR.TEMP.RANGE)))) {
       my_temperatures <- calcTemps(data.frame(
         Site_ID = as.character(data$SITE),
         Easting4 = bng$easting / 100,
@@ -483,7 +483,7 @@ These values will be used instead of calculating them from Grid Reference values
         replacem <- ""
         if (is.na(rule$replacement) == FALSE) {
           if (!is.na(value[, rule$variable]) & rule$replacement_cond == "lessthan" &
-            value[, rule$variable] <= rule$replacement_limit) {
+              value[, rule$variable] <= rule$replacement_limit) {
             replacem <- c(
               replacem,
               paste0(
@@ -493,7 +493,7 @@ These values will be used instead of calculating them from Grid Reference values
             )
           }
           if (!is.na(value[, rule$variable]) & rule$replacement_cond == "equals" &
-            value[, rule$variable] == rule$replacement_limit) {
+              value[, rule$variable] == rule$replacement_limit) {
             replacem <- c(
               replacem,
               paste0(
@@ -526,22 +526,22 @@ These values will be used instead of calculating them from Grid Reference values
   checks <- dplyr::bind_rows(checks)
   ### Add discharge and velocity columns missing data fails ---------------------------
   if(area != "iom") {
-  discharge_velocity_fails <- data[is.na(data$DISCHARGE) & is.na(data$VELO_TRUE), ]
-  discharge_velocity_fails <- data.frame(
-    "ROW" = discharge_velocity_fails$ROW,
-    "SITE" = discharge_velocity_fails$SITE,
-    "YEAR" = discharge_velocity_fails$YEAR,
-    stringsAsFactors = FALSE
-  )
+    discharge_velocity_fails <- data[is.na(data$DISCHARGE) & is.na(data$VELO_TRUE), ]
+    discharge_velocity_fails <- data.frame(
+      "ROW" = discharge_velocity_fails$ROW,
+      "SITE" = discharge_velocity_fails$SITE,
+      "YEAR" = discharge_velocity_fails$YEAR,
+      stringsAsFactors = FALSE
+    )
 
-  if (nrow(discharge_velocity_fails) > 0) {
-    discharge_velocity_fails$FAIL <-
-      "You provided empty VELOCITY and DISCHARGE values, we expect values for at least one of these variables."
-    discharge_velocity_fails$WARNING <- ""
-    discharge_velocity_fails$REPLACEMENT <- ""
-    # Add discharge and velocity fails
-    checks <- rbind(checks, discharge_velocity_fails)
-  }
+    if (nrow(discharge_velocity_fails) > 0) {
+      discharge_velocity_fails$FAIL <-
+        "You provided empty VELOCITY and DISCHARGE values, we expect values for at least one of these variables."
+      discharge_velocity_fails$WARNING <- ""
+      discharge_velocity_fails$REPLACEMENT <- ""
+      # Add discharge and velocity fails
+      checks <- rbind(checks, discharge_velocity_fails)
+    }
   }
   ### Replace values if value is less than the ‘overall’ minimum value ------------------------------
   validation_rules_input <- validation_rules[validation_rules$source == "input", ]
@@ -551,7 +551,7 @@ These values will be used instead of calculating them from Grid Reference values
     data$ALTITUDE[data$ALTITUDE == ALT_LIM] <- ALT_VAL
   }
   DFS_LIM <- validation_rules_input[validation_rules_input$variable %in%
-    c("DIST_FROM_SOURCE", "D_F_SOURCE"), "replacement_limit"]
+                                      c("DIST_FROM_SOURCE", "D_F_SOURCE"), "replacement_limit"]
   if (any(data$DIST_FROM_SOURCE[!is.na(data$DIST_FROM_SOURCE)] < DFS_LIM)) {
     data$DIST_FROM_SOURCE[data$DIST_FROM_SOURCE < DFS_LIM] <- DFS_LIM
   }
@@ -630,7 +630,7 @@ These values will be used instead of calculating them from Grid Reference values
        We expect at least one row without any fails to proceed.
        HINT: Check fail messages, fix errors and re-try: ",
                     paste(utils::capture.output(print(checks)),
-              collapse = "\n")), collapse = "\n"),
+                          collapse = "\n")), collapse = "\n"),
          call. = FALSE)
   }
 
