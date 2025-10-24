@@ -54,16 +54,6 @@ get_alkalinity <- function(data) {
   return(data)
 }
 
-# Calculate total substrate and phi grain size scale
-get_substrate <- function(data) {
-  data$TOTSUB <- rowSums(data[, c("BOULDER_COBBLES", "PEBBLES_GRAVEL", "SILT_CLAY", "SAND")])
-  data$MSUBST <- ((-7.75 * data$BOULDER_COBBLES) - (3.25 * data$PEBBLES_GRAVEL) +
-    (2 * data$SAND) + (8 * data$SILT_CLAY)) / data$TOTSUB
-  # re-assign substrate variable to match with prediction function requirements
-  data$vld_substr_log <- data$SUBSTRATE_PHI
-  return(data)
-}
-
 # Get latLong, use package rnrfa for function osg_parse
 getLatLong <- function(nat_grid_ref, easting, northing, coordsys_latlon, area) {
   lat_long <- NA
